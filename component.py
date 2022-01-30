@@ -53,6 +53,8 @@ class Leg(Resistor):
   def __init__(self, name, circuitType, subcomponents, voltage = None, current = None, resistance = None):
     super().__init__(name, voltage = voltage, current = current, resistance = resistance, allowBypass = True)
     self.circuitType = circuitType
+    if len(subcomponents) == 0:
+      raise Exception(f"Leg {self.name} must have at least 1 subresistor.")
     self.subcomponents = subcomponents
 
   def solved(self):

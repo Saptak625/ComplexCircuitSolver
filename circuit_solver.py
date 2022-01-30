@@ -40,7 +40,7 @@ class CircuitSolver:
             elif parameters[1] == 'p':
               circuitType = CircuitType.parallel
             else:
-              raise Exception(f'Must declare whether Leg "{parameters[0]}" is series or parallel.')
+              raise Exception(f'Must declare whether Leg "{parameters[0].upper()}" is series or parallel.')
             subcomponentNames = subcomponentString.split(',')[:-1]
             subcomponents = [self.components[n.upper()] for n in subcomponentNames]
             l = Leg(parameters[0], circuitType, subcomponents, voltage = voltage, current = current, resistance = resistance)
@@ -50,8 +50,6 @@ class CircuitSolver:
           returnComponent = parameters[1].upper()
     if returnComponent not in self.components:
       raise Exception(f"Return Statement must be included.")
-    if type(self.components[returnComponent]) is not Leg:
-      raise Exception(f"Return Statment must return a leg.")
     self.circuit = self.components[returnComponent]
 
   def solve(self):
