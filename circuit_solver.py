@@ -14,6 +14,8 @@ class CircuitSolver:
         c = raw.lower()
         c = c.replace('\n', '')
         parameters = c.split(' ')
+        if not c:
+          continue
         if c[0] == 'r' or c[0] == 'l':
           voltage = None
           current = None
