@@ -4,6 +4,7 @@ class CircuitSolver:
   def __init__(self, fileName):
     self.components = {}
     self.compileCircuit(fileName)
+    self.stepByStepReasoning = ''
 
   def compileCircuit(self, fileName):
     #Read Line by Line to compile code
@@ -65,3 +66,6 @@ class CircuitSolver:
       if not ((not showLegs and n[0] == 'L') or (not showResistors and n[0] == 'R') or n == self.circuit.name):
         print()
         self.components[n].printValues()
+
+  def writeReasoning(reasoning):
+    self.stepByStepReasoning += reasoning;
