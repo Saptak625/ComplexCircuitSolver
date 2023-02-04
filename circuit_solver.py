@@ -4,7 +4,7 @@ class CircuitSolver:
   def __init__(self, circuitCode):
     self.components = {}
     self.compileCircuit(circuitCode)
-    self.stepByStepReasoning = ''
+    self.stepByStepReasoning = []
 
   def compileCircuitFromFile(fileName):
     with open(fileName, 'r') as circuitCode:
@@ -38,7 +38,7 @@ class CircuitSolver:
             subcomponentString = p
         if c[0] == 'r':
           #Create new resistor
-          r = Resistor(parameters[0], voltage = voltage, current = current, resistance = resistance)
+          r = Resistor(parameters[0], self.writeReasoning, voltage = voltage, current = current, resistance = resistance)
           self.components[r.name] = r
         else:
           #Create new Leg
@@ -50,7 +50,7 @@ class CircuitSolver:
             raise Exception(f'Must declare whether Leg "{parameters[0].upper()}" is series or parallel.')
           subcomponentNames = subcomponentString.split(',')[:-1]
           subcomponents = [self.components[n.upper()] for n in subcomponentNames]
-          l = Leg(parameters[0], circuitType, subcomponents, voltage = voltage, current = current, resistance = resistance)
+          l = Leg(parameters[0], self.writeReasoning, circuitType, subcomponents, voltage = voltage, current = current, resistance = resistance)
           self.components[l.name] = l
       else:
         #Return Statement
@@ -65,22 +65,48 @@ class CircuitSolver:
       if not self.circuit.solve():
         raise Exception('Either not enough information passed resulting in ambigious case or algorithm missing solving method')
 
-  def showCircuit(self, showLegs = True, showResistors = True):
-    print(self.__str__(showLegs, showResistors))
+  def writeReasoning(self, reasoning):
+    self.stepByStepReasoning.append(reasoning)
 
-  def __str__(self, showLegs = True, showResistors = True):
+  def getStepByStepReasoning(self, showVoltageSteps = True, showCurrentSteps = True, showResistanceSteps = True):
+    out = []
+    i = 1
+    for r in self.stepByStepReasoning:
+      write = False
+      if "Ohm's Law" in r:
+        if 'its voltage' in r and showVoltageSteps:
+          write = True
+        elif 'its current' in r and showCurrentSteps:
+          write = True
+        elif 'its resistance' in r and showResistanceSteps:
+          write = True
+      elif 'Voltage' in r and showVoltageSteps:
+        write = True
+      elif 'Current' in r and showCurrentSteps:
+        write = True
+      elif 'Resistance' in r and showResistanceSteps:
+        write = True
+      if write:
+        out.append(f'{i}. {r}')
+        i += 1
+    return '\n'.join(out)
+
+  def showStepByStepReasoning(self, showVoltageSteps = True, showCurrentSteps = True, showResistanceSteps = True):
+    print(self.getStepByStepReasoning(showVoltageSteps=showVoltageSteps, showCurrentSteps=showCurrentSteps, showResistanceSteps=showResistanceSteps))
+
+  def __str__(self, showLegs = True, showResistors = True, showVoltage = True, showCurrent = True, showResistance = True):
     def sortKeys(name):
       return 0 if name[0].upper() == 'L' else 1, sum([ord(i) for i in name[1:]])
     componentNames = sorted(list(self.components.keys()), key = sortKeys)
-    out = str(self.circuit)
+    out = self.circuit.__str__(showVoltage=showVoltage, showCurrent=showCurrent, showResistance=showResistance)
     for n in componentNames:
       if not ((not showLegs and n[0] == 'L') or (not showResistors and n[0] == 'R') or n == self.circuit.name):
-        out += f'\n\n{self.components[n]}'
+        out += f'\n\n{self.components[n].__str__(showVoltage=showVoltage, showCurrent=showCurrent, showResistance=showResistance)}'
         pass
     return out
 
-  def __repr__(self, showLegs = True, showResistors = True):
-    return self.__str__(showLegs, showResistors)
+  def __repr__(self, showLegs = True, showResistors = True, showVoltage = True, showCurrent = True, showResistance = True):
+    return self.__str__(showLegs=showLegs, showResistors=showResistors, showVoltage=showVoltage, showCurrent=showCurrent, showResistance=showResistance)
 
-  def writeReasoning(reasoning):
-    self.stepByStepReasoning += reasoning;
+  def showCircuit(self, showLegs = True, showResistors = True, showVoltage = True, showCurrent = True, showResistance = True):
+    print(self.__str__(showLegs=showLegs, showResistors=showResistors, showVoltage=showVoltage, showCurrent=showCurrent, showResistance=showResistance))
