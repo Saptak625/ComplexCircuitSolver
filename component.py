@@ -5,6 +5,8 @@ class CircuitType(enum.Enum):
     parallel = 2
 
 class Resistor:
+  roundingPlace = 5
+
   def __init__(self, name, writeReasoning, voltage = None, current = None, resistance = None, allowBypass = False):
     self.name = name.upper()
     self.writeReasoning = writeReasoning
@@ -29,15 +31,15 @@ class Resistor:
       if self.voltage and self.current:
         self.resistance = self.voltage / self.current
         self.resistanceReason = "Ohm's Law"
-        self.writeReasoning(f'{self.name} has a voltage of {round(self.voltage, 5)} Volts and a current of {round(self.current, 5)} Amps, so its resistance is {round(self.resistance, 5)} Ohms. (Ohm\'s Law)')
+        self.writeReasoning(f'{self.name} has a voltage of {round(self.voltage, Resistor.roundingPlace)} Volts and a current of {round(self.current, Resistor.roundingPlace)} Amps, so its resistance is {round(self.resistance, Resistor.roundingPlace)} Ohms. (Ohm\'s Law)')
       elif self.voltage and self.resistance:
         self.current = self.voltage / self.resistance
         self.currentReason = "Ohm's Law"
-        self.writeReasoning(f'{self.name} has a voltage of {round(self.voltage, 5)} Volts, and a resistance of {round(self.resistance, 5)} Ohms, so its current is {round(self.current, 5)} Amps. (Ohm\'s Law)')
+        self.writeReasoning(f'{self.name} has a voltage of {round(self.voltage, Resistor.roundingPlace)} Volts, and a resistance of {round(self.resistance, Resistor.roundingPlace)} Ohms, so its current is {round(self.current, Resistor.roundingPlace)} Amps. (Ohm\'s Law)')
       else:
         self.voltage = self.current * self.resistance
         self.voltageReason = "Ohm's Law"
-        self.writeReasoning(f'{self.name} has a current of {round(self.current, 5)} Amps and a resistance of {round(self.resistance, 5)} Ohms, so its voltage is {round(self.voltage, 5)} Volts. (Ohm\'s Law)')
+        self.writeReasoning(f'{self.name} has a current of {round(self.current, Resistor.roundingPlace)} Amps and a resistance of {round(self.resistance, Resistor.roundingPlace)} Ohms, so its voltage is {round(self.voltage, Resistor.roundingPlace)} Volts. (Ohm\'s Law)')
       return True
     return False
 
@@ -46,7 +48,7 @@ class Resistor:
 
   def __str__(self, pretty = True, showVoltage = True, showCurrent = True, showResistance = True):
     if pretty:
-      props = [f'Voltage: {round(self.voltage, 5)} Volts ({self.voltageReason})', f'Current: {round(self.current, 5)} Amps ({self.currentReason})', f'Resistance: {round(self.resistance, 5)} Ohms ({self.resistanceReason})']
+      props = [f'Voltage: {round(self.voltage, Resistor.roundingPlace)} Volts ({self.voltageReason})', f'Current: {round(self.current, Resistor.roundingPlace)} Amps ({self.currentReason})', f'Resistance: {round(self.resistance, Resistor.roundingPlace)} Ohms ({self.resistanceReason})']
       props = [p for i, p in enumerate(props) if [showVoltage, showCurrent, showResistance][i]]
       return f'{self.name}:\n' + '\n'.join(props)
     else:
@@ -95,12 +97,12 @@ class Leg(Resistor):
         if not self.current:
           self.current = equalityCurrent
           self.currentReason = 'Series Current Equality'
-          self.writeReasoning(f'{self.name} has a current of {round(self.current, 5)} Amps because all subcomponents have the same current. (Series Current Equality)')
+          self.writeReasoning(f'{self.name} has a current of {round(self.current, Leg.roundingPlace)} Amps because all subcomponents have the same current. (Series Current Equality)')
         for s in self.subcomponents:
           if not s.current:
             s.current = equalityCurrent
             s.currentReason = 'Series Current Equality'
-            s.writeReasoning(f'{s.name} has a current of {round(s.current, 5)} Amps because all subcomponents have the same current. (Series Current Equality)')
+            s.writeReasoning(f'{s.name} has a current of {round(s.current, Leg.roundingPlace)} Amps because all subcomponents have the same current. (Series Current Equality)')
         return True
     else:
       testSum = len([True for s in self.subcomponents if s.voltage]) + (1 if self.voltage else 0)
@@ -109,12 +111,12 @@ class Leg(Resistor):
         if not self.voltage:
           self.voltage = equalityVoltage
           self.voltageReason = 'Parallel Voltage Equality'
-          self.writeReasoning(f'{self.name} has a voltage of {round(self.voltage, 5)} Volts because all subcomponents have the same voltage. (Parallel Voltage Equality)')
+          self.writeReasoning(f'{self.name} has a voltage of {round(self.voltage, Leg.roundingPlace)} Volts because all subcomponents have the same voltage. (Parallel Voltage Equality)')
         for s in self.subcomponents:
           if not s.voltage:
             s.voltage = equalityVoltage
             s.voltageReason = 'Parallel Voltage Equality'
-            s.writeReasoning(f'{s.name} has a voltage of {round(s.voltage, 5)} Volts because all subcomponents have the same voltage. (Parallel Voltage Equality)')
+            s.writeReasoning(f'{s.name} has a voltage of {round(s.voltage, Leg.roundingPlace)} Volts because all subcomponents have the same voltage. (Parallel Voltage Equality)')
         return True
     return False
 
@@ -125,7 +127,7 @@ class Leg(Resistor):
         if not self.voltage: #Voltage for leg not provided. Add all subvoltages.
           self.voltage = sum([s.voltage for s in self.subcomponents])
           self.voltageReason = 'Series Voltage Sum'
-          self.writeReasoning(f'{self.name} has a voltage of {round(self.voltage, 5)} Volts because it is equal to the sum of the voltages of all subcomponents {", ".join([s.name+" ("+str(round(s.voltage, 5))+" Volts)" for s in self.subcomponents])}. (Series Voltage Sum)')
+          self.writeReasoning(f'{self.name} has a voltage of {round(self.voltage, Leg.roundingPlace)} Volts because it is equal to the sum of the voltages of all subcomponents {", ".join([s.name+" ("+str(round(s.voltage, Leg.roundingPlace))+" Volts)" for s in self.subcomponents])}. (Series Voltage Sum)')
         else:
           subcomponentVoltageSum = 0
           targetSubcomponent = None
@@ -136,14 +138,14 @@ class Leg(Resistor):
               targetSubcomponent = s
           targetSubcomponent.voltage = self.voltage - subcomponentVoltageSum
           targetSubcomponent.voltageReason = 'Series Voltage Sum'
-          self.writeReasoning(f'{targetSubcomponent.name} has a voltage of {round(targetSubcomponent.voltage, 5)} Volts because it is equal to the difference between the voltage of {self.name} ({round(self.voltage, 5)} Volts) and the sum of the voltages of all other subcomponents ({", ".join([s.name for s in self.subcomponents if s != targetSubcomponent])}) ({round(subcomponentVoltageSum, 5)} Volts). (Series Voltage Sum)')
+          self.writeReasoning(f'{targetSubcomponent.name} has a voltage of {round(targetSubcomponent.voltage, Leg.roundingPlace)} Volts because it is equal to the difference between the voltage of {self.name} ({round(self.voltage, Leg.roundingPlace)} Volts) and the sum of the voltages of all other subcomponents ({", ".join([s.name for s in self.subcomponents if s != targetSubcomponent])}) ({round(subcomponentVoltageSum, Leg.roundingPlace)} Volts). (Series Voltage Sum)')
         return True
       testResistanceSum = len([True for s in self.subcomponents if s.resistance]) + (1 if self.resistance else 0)
       if testResistanceSum == len(self.subcomponents):
         if not self.resistance: #Resistance for leg not provided. Add all subresistances.
           self.resistance = sum([s.resistance for s in self.subcomponents])
           self.resistanceReason = 'Series Resistance Sum'
-          self.writeReasoning(f'{self.name} has a resistance of {round(self.resistance, 5)} Ohms because it is equal to the sum of the resistances of all subcomponents {", ".join([s.name+" ("+str(round(s.resistance, 5))+" Ohms)" for s in self.subcomponents])}. (Series Resistance Sum)')
+          self.writeReasoning(f'{self.name} has a resistance of {round(self.resistance, Leg.roundingPlace)} Ohms because it is equal to the sum of the resistances of all subcomponents {", ".join([s.name+" ("+str(round(s.resistance, Leg.roundingPlace))+" Ohms)" for s in self.subcomponents])}. (Series Resistance Sum)')
         else:
           subcomponentResistanceSum = 0
           targetSubcomponent = None
@@ -154,7 +156,7 @@ class Leg(Resistor):
               targetSubcomponent = s
           targetSubcomponent.resistance = self.resistance - subcomponentResistanceSum
           targetSubcomponent.resistanceReason = 'Series Resistance Sum'
-          self.writeReasoning(f'{targetSubcomponent.name} has a resistance of {round(targetSubcomponent.resistance, 5)} Ohms because it is equal to the difference between the resistance of {self.name} ({round(self.resistance, 5)} Ohms) and the sum of the resistances of all other subcomponents ({", ".join([s.name for s in self.subcomponents if s != targetSubcomponent])}) ({round(subcomponentResistanceSum, 5)} Ohms). (Series Resistance Sum)')
+          self.writeReasoning(f'{targetSubcomponent.name} has a resistance of {round(targetSubcomponent.resistance, Leg.roundingPlace)} Ohms because it is equal to the difference between the resistance of {self.name} ({round(self.resistance, Leg.roundingPlace)} Ohms) and the sum of the resistances of all other subcomponents ({", ".join([s.name for s in self.subcomponents if s != targetSubcomponent])}) ({round(subcomponentResistanceSum, Leg.roundingPlace)} Ohms). (Series Resistance Sum)')
         return True
     else:
       testCurrentSum = len([True for s in self.subcomponents if s.current]) + (1 if self.current else 0)
@@ -162,7 +164,7 @@ class Leg(Resistor):
         if not self.current: #Current for leg not provided. Add all subcurrents.
           self.current = sum([s.current for s in self.subcomponents])
           self.currentReason = 'Parallel Current Sum'
-          self.writeReasoning(f'{self.name} has a current of {round(self.current, 5)} Amps because it is equal to the sum of the currents of all subcomponents {", ".join([s.name+" ("+str(round(s.current, 5))+" Amps)" for s in self.subcomponents])}. (Parallel Current Sum)')
+          self.writeReasoning(f'{self.name} has a current of {round(self.current, Leg.roundingPlace)} Amps because it is equal to the sum of the currents of all subcomponents {", ".join([s.name+" ("+str(round(s.current, Leg.roundingPlace))+" Amps)" for s in self.subcomponents])}. (Parallel Current Sum)')
         else:
           subcomponentCurrentSum = 0
           targetSubcomponent = None
@@ -173,14 +175,14 @@ class Leg(Resistor):
               targetSubcomponent = s
           targetSubcomponent.current = self.current - subcomponentCurrentSum
           targetSubcomponent.currentReason = 'Parallel Current Sum'
-          self.writeReasoning(f'{targetSubcomponent.name} has a current of {round(targetSubcomponent.current, 5)} Amps because it is equal to the difference between the current of {self.name} ({round(self.current, 5)} Amps) and the sum of the currents of all other subcomponents ({", ".join([s.name for s in self.subcomponents if s != targetSubcomponent])}) ({round(subcomponentCurrentSum, 5)} Amps). (Parallel Current Sum)')
+          self.writeReasoning(f'{targetSubcomponent.name} has a current of {round(targetSubcomponent.current, Leg.roundingPlace)} Amps because it is equal to the difference between the current of {self.name} ({round(self.current, Leg.roundingPlace)} Amps) and the sum of the currents of all other subcomponents ({", ".join([s.name for s in self.subcomponents if s != targetSubcomponent])}) ({round(subcomponentCurrentSum, Leg.roundingPlace)} Amps). (Parallel Current Sum)')
         return True
       testResistanceSum = len([True for s in self.subcomponents if s.resistance]) + (1 if self.resistance else 0)
       if testResistanceSum == len(self.subcomponents):
         if not self.resistance: #Resistance for leg not provided. Add all subresistances using 1/r formula.
           self.resistance = 1/sum([(1/s.resistance) for s in self.subcomponents])
           self.resistanceReason = 'Parallel Resistance Sum'
-          self.writeReasoning(f'{self.name} has a resistance of {round(self.resistance, 5)} Ohms because it is equal to the reciprocal of the sum of the reciprocals of the resistances of all subcomponents {", ".join([s.name+" ("+str(round(s.resistance, 5))+" Ohms)" for s in self.subcomponents])}. (Parallel Resistance Sum)')
+          self.writeReasoning(f'{self.name} has a resistance of {round(self.resistance, Leg.roundingPlace)} Ohms because it is equal to the reciprocal of the sum of the reciprocals of the resistances of all subcomponents {", ".join([s.name+" ("+str(round(s.resistance, Leg.roundingPlace))+" Ohms)" for s in self.subcomponents])}. (Parallel Resistance Sum)')
         else:
           subcomponentResistanceSum = 0
           targetSubcomponent = None
@@ -191,13 +193,13 @@ class Leg(Resistor):
               targetSubcomponent = s
           targetSubcomponent.resistance = 1/((1/self.resistance) - subcomponentResistanceSum)
           targetSubcomponent.resistanceReason = 'Parallel Resistance Sum'
-          self.writeReasoning(f'{targetSubcomponent.name} has a resistance of {round(targetSubcomponent.resistance, 5)} Ohms because it is equal to the reciprocal of the difference between the reciprocal of the resistance of {self.name} ({round(self.resistance, 5)} Ohms) and the sum of the reciprocals of the resistances of all other subcomponents ({", ".join([s.name for s in self.subcomponents if s != targetSubcomponent])}) ({round(subcomponentResistanceSum, 5)} Ohms). (Parallel Resistance Sum)')
+          self.writeReasoning(f'{targetSubcomponent.name} has a resistance of {round(targetSubcomponent.resistance, Leg.roundingPlace)} Ohms because it is equal to the reciprocal of the difference between the reciprocal of the resistance of {self.name} ({round(self.resistance, Leg.roundingPlace)} Ohms) and the sum of the reciprocals of the resistances of all other subcomponents ({", ".join([s.name for s in self.subcomponents if s != targetSubcomponent])}) ({round(subcomponentResistanceSum, Leg.roundingPlace)} Ohms). (Parallel Resistance Sum)')
         return True
     return False
 
   def __str__(self, pretty = True, showVoltage = True, showCurrent = True, showResistance = True):
     if pretty:
-      props = [f'Voltage: {round(self.voltage, 5)} Volts ({self.voltageReason})', f'Current: {round(self.current, 5)} Amps ({self.currentReason})', f'Resistance: {round(self.resistance, 5)} Ohms ({self.resistanceReason})']
+      props = [f'Voltage: {round(self.voltage, Leg.roundingPlace)} Volts ({self.voltageReason})', f'Current: {round(self.current, Leg.roundingPlace)} Amps ({self.currentReason})', f'Resistance: {round(self.resistance, Leg.roundingPlace)} Ohms ({self.resistanceReason})']
       props = [p for i, p in enumerate(props) if [showVoltage, showCurrent, showResistance][i]]
       return f'{self.name}:\n' + '\n'.join(props)
     else:

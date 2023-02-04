@@ -59,6 +59,9 @@ class CircuitSolver:
       raise Exception(f"Return Statement must be included.")
     self.circuit = self.components[returnComponent]
 
+  def setRoundingPlace(self, roundingPlace):
+    Resistor.roundingPlace = roundingPlace
+
   def solve(self):
     #Solving Driver
     while not self.circuit.solved():
