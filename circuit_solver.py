@@ -14,7 +14,7 @@ class CircuitSolver:
   def compileCircuit(self, circuitCode):
     #Read Line by Line to compile code
     returnComponent = ''
-    for raw in circuitCode.split('\n'):
+    for raw in circuitCode.replace('\r', '\n').split('\n'):
       c = raw.lower()
       c = c.replace('\n', '')
       parameters = c.split(' ')
