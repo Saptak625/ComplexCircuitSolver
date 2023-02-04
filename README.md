@@ -1,10 +1,10 @@
 # ComplexCircuitSolver
 Complex Circuit Solver is a Python program to solve Complex Circuits with Resistors with Logical Reasoning. It uses a Component Tree structure with Recursive Solving to determine the voltages, currents, and resistances for any complex circuit.
 
-Demo Link(https://replit.com/@Saptak625/ComplexCircuitSolver#main.py).
+If you would like to try this solver online, check out https://circuitcracker.vercel.app/ and https://github.com/Saptak625/CircuitCracker.
 
 ## User Guide
-In the current version (v1), circuits are represented in .crc circuit code file. An example circuit is shown below.
+In the current version (V1), circuits are represented in .crc circuit code file. An example circuit is shown below.
 https://github.com/Saptak625/ComplexCircuitSolver/blob/a2d3065e9036d06bf58c552c4f95b742c9161b11/template_circuit.crc#L1-L15
 
 These files are compiled line by line by a custom compiler to create a Component Tree structure. The code in main.py will compile the given file when the CiruitSolver class is instantiated.
@@ -28,5 +28,5 @@ Every circuit code file needs to have a PASS statement. This statement signifies
 Eg. `PASS LT`
 
 ## Future Plans
-* Circuit Code may be replaced with interative GUI to design circuits instead. This may result in automatic definitions of legs.
-* Expansion to other electrical components such as capacitors and inductors may be added.
+* The integration of a GUI into Circuit Code has the potential to greatly enhance the design process for electrical circuits. With a graphical interface, designing circuits may become easier and more intuitive for users, reducing the need for manual coding and allowing for a more user-friendly experience. The automatic definition of legs may also simplify the process of defining and organizing components in a circuit.
+* Furthermore, the expansion of Circuit Code to include other electrical components such as capacitors and inductors may bring more versatility and accuracy to the simulation of electrical circuits. This would allow for the simulation of a wider range of circuits and increase the overall usefulness of Circuit Code. Additionally, the ability to simulate these components may lead to improved circuit design and optimization, resulting in better performance and functionality in real-world applications.
