@@ -37,17 +37,14 @@ class Resistor:
       return True
     return False
 
-  def printValues(self):
-    print(f'{self.name}:')
-    print(f'Voltage: {round(self.voltage, 5)} Volts ({self.voltageReason})')
-    print(f'Current: {round(self.current, 5)} Amps ({self.currentReason})')
-    print(f'Resistance: {round(self.resistance, 5)} Ohms ({self.resistanceReason})')
+  def __repr__(self, pretty = False):
+    return self.__str__(pretty = pretty)
 
-  def __repr__(self):
-    return self.__str__()
-
-  def __str__(self):
-    return f'Resistor({self.name}, [{self.voltage}-{self.voltageReason}, {self.current}-{self.currentReason}, {self.resistance}-{self.resistanceReason}])'
+  def __str__(self, pretty = True):
+    if pretty:
+      return f'{self.name}:\nVoltage: {round(self.voltage, 5)} Volts ({self.voltageReason})\nCurrent: {round(self.current, 5)} Amps ({self.currentReason})\nResistance: {round(self.resistance, 5)} Ohms ({self.resistanceReason})'
+    else:
+      return f'Resistor({self.name}, [{self.voltage}-{self.voltageReason}, {self.current}-{self.currentReason}, {self.resistance}-{self.resistanceReason}])'
 
 class Leg(Resistor):
   def __init__(self, name, circuitType, subcomponents, voltage = None, current = None, resistance = None):
@@ -175,8 +172,11 @@ class Leg(Resistor):
         return True
     return False
 
-  def __repr__(self):
-    return self.__str__()
+  def __repr__(self, pretty = False):
+    return self.__str__(pretty=pretty)
 
-  def __str__(self):
-    return f'Resistor({self.name}, {self.circuitType}, {self.subcomponents}, [{self.voltage}-{self.voltageReason}, {self.current}-{self.currentReason}, {self.resistance}-{self.resistanceReason}])'
+  def __str__(self, pretty = True):
+    if pretty:
+      return f'{self.name}:\nVoltage: {round(self.voltage, 5)} Volts ({self.voltageReason})\nCurrent: {round(self.current, 5)} Amps ({self.currentReason})\nResistance: {round(self.resistance, 5)} Ohms ({self.resistanceReason})'
+    else:
+      return f'Leg({self.name}, {self.circuitType}, {self.subcomponents}, [{self.voltage}-{self.voltageReason}, {self.current}-{self.currentReason}, {self.resistance}-{self.resistanceReason}])'

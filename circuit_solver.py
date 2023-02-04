@@ -66,12 +66,21 @@ class CircuitSolver:
         raise Exception('Either not enough information passed resulting in ambigious case or algorithm missing solving method')
 
   def showCircuit(self, showLegs = True, showResistors = True):
-    componentNames = sorted(list(self.components.keys()))
-    self.circuit.printValues()
+    print(self.__str__(showLegs, showResistors))
+
+  def __str__(self, showLegs = True, showResistors = True):
+    def sortKeys(name):
+      return 0 if name[0].upper() == 'L' else 1, sum([ord(i) for i in name[1:]])
+    componentNames = sorted(list(self.components.keys()), key = sortKeys)
+    out = str(self.circuit)
     for n in componentNames:
       if not ((not showLegs and n[0] == 'L') or (not showResistors and n[0] == 'R') or n == self.circuit.name):
-        print()
-        self.components[n].printValues()
+        out += f'\n\n{self.components[n]}'
+        pass
+    return out
+
+  def __repr__(self, showLegs = True, showResistors = True):
+    return self.__str__(showLegs, showResistors)
 
   def writeReasoning(reasoning):
     self.stepByStepReasoning += reasoning;
