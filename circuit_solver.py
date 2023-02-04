@@ -90,7 +90,7 @@ class CircuitSolver:
       elif 'Resistance' in r and showResistanceSteps:
         write = True
       if write:
-        out.append(f'{i}. {r}')
+        out.append(r if asList else f'{i}. {r}')
         i += 1
     return out if asList else '\n'.join(out)
 
